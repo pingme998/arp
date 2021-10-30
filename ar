@@ -34,7 +34,8 @@ do
     cat $progresslog |tail -6 |grep 'MiB\|KiB\|ETA:\|FILE: ' >$theprogress
     source ./process/$$/PIDVAR0
     echo $ah >>ah
-    cat download.html |sed "s|ETAANDPROGRESS|$ah|g" > ./templates/download.html
+    #cat download.html |sed "s|ETAANDPROGRESS|$ah|g" > ./templates/download.html
+    cat download.html | sed -e "s|ETAANDPROGRESS|$(echo $ah |sed 's/\/download\//\nDownloading File : /g'|grep 'Downloading File : ')\n$(echo $ah|grep -E 'KiB|MiB|GiB')|g"
     if fgrep --quiet "$match" "./process/$$/progresslog"
     then
         kill $pid
