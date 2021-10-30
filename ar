@@ -1,0 +1,46 @@
+#!/bin/bash
+echo "Author : DevAnaZ"
+mkdir ./process
+mkdir ./process/$$
+cp *.txt ./process/$$
+
+mkdir ./process/$$/download
+touch ./process/$$/progression1.log
+touch ./process/$$/progresslog
+touch ./process/$$/PIDVAR
+
+##the vars
+echo $$ >./process/$$/PID.txt
+echo $$ |sed 's/^/progresslog=".\/process\//g' |sed 's/$/\/progresslog"/g' >./process/$$/PIDVAR
+echo $$ |sed 's/^/theprogress=".\/process\//g' |sed 's/$/\/progression1.log"/g' >>./process/$$/PIDVAR
+echo $$ |sed 's/^/remotecloud=$(cat ".\/process\//g' |sed 's/$/\/remotewid.txt")/g' >>./process/$$/PIDVAR
+echo $$ |sed 's/^/threats=$(cat ".\/process\//g' |sed 's/$/\/sliderwidget.txt")/g' >>./process/$$/PIDVAR
+echo $$ |sed 's/^/urlbox=".\/process\//g' |sed 's/$/\/theurlbox.txt"/g' >>./process/$$/PIDVAR
+echo $$ |sed 's/^/ah=$(cat ".\/process\//g' |sed 's/$/\/progression1.log")/g' >>./process/$$/PIDVAR0
+
+
+source ./process/$$/PIDVAR
+echo $progresslog  >>ah
+
+
+
+match="(OK):download completed"
+
+aria2c --show-console-readout=false --console-log-level=warn --summary-interval=5 --max-download-limit=2k --input-file="$urlbox" --dir="./process/$$/download"  --max-concurrent-downloads=1 --connect-timeout=60  --min-split-size=1M  --file-allocation=none  >$progresslog 2>&1 &
+pid=$!
+
+while sleep 7
+do
+    cat $progresslog |tail -6 |grep 'MiB\|KiB\|ETA:\|FILE: ' >$theprogress
+    source ./process/$$/PIDVAR0
+    echo $ah >>ah
+    cat download.html |sed "s|ETAANDPROGRESS|$ah|g" > ./templates/download.html
+    if fgrep --quiet "$match" "./process/$$/progresslog"
+    then
+        kill $pid
+        exit 0
+    fi
+done
+
+
+kill $$
